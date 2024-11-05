@@ -19,7 +19,7 @@ https://beautifulcode.ru
 2.	Transaction.java – класс, представляющий модель данных транзакции.
 3.	TransactionRepository.java – класс, обеспечивающий доступ к данным транзакций.
 4.	Logger.java – класс, обеспечивающий базовую функциональность логирования событий.
-5.	TransactionProcessorTest.java – тестовый класс для проверки корректности работы кода.  [скачать](java)
+5.	TransactionProcessorTest.java – тестовый класс для проверки корректности работы кода.  [скачать](https://github.com/Valentina810/beauty-of-code-2/blob/main/java.zip)
 
 ### Предистория задачи:
 
