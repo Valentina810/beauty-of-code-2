@@ -1,13 +1,10 @@
 
 package com.github.valentina810.beauty_of_code_2;
 
-import com.github.valentina810.beauty_of_code_2.model.Transaction;
+import com.github.valentina810.beauty_of_code_2.service.TransactionProcessor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @SpringBootTest
 public class TransactionProcessorTest {

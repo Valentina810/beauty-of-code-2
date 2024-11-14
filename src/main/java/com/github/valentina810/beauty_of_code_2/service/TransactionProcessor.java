@@ -1,6 +1,7 @@
 
-package com.github.valentina810.beauty_of_code_2;
+package com.github.valentina810.beauty_of_code_2.service;
 
+import com.github.valentina810.beauty_of_code_2.Logger;
 import com.github.valentina810.beauty_of_code_2.model.Transaction;
 import com.github.valentina810.beauty_of_code_2.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
