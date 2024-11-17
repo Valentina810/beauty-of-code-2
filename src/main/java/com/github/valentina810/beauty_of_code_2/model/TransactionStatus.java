@@ -15,12 +15,12 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Getter
 @Setter
 @Entity
-@Table(name = "transaction_status_", schema = "public")
+@Table(name = "transaction_status", schema = "public")
 public class TransactionStatus {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "id", nullable = false, unique = true)
     private Long id;
     @Column(name = "status_name", nullable = false)
-    private BigDecimal statusName;
+    private String statusName;
 }

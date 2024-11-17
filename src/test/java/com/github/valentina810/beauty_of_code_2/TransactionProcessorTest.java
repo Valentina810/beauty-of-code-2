@@ -1,7 +1,7 @@
 
 package com.github.valentina810.beauty_of_code_2;
 
-import com.github.valentina810.beauty_of_code_2.service.TransactionProcessor;
+import com.github.valentina810.beauty_of_code_2.service.TransactionServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,7 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class TransactionProcessorTest {
 
     @Autowired
-    private TransactionProcessor processor;
+    private TransactionServiceImpl processor;
 
     @Test
     public void testProcessTransactions() {
