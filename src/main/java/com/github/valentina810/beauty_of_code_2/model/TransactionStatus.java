@@ -8,8 +8,6 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.math.BigDecimal;
-
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Getter
@@ -19,8 +17,8 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 public class TransactionStatus {
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "id", nullable = false, unique = true)
-    private Long id;
+    @Column(name = "status_id", nullable = false, unique = true)
+    private Long statusId;
     @Column(name = "status_name", nullable = false)
     private String statusName;
 }

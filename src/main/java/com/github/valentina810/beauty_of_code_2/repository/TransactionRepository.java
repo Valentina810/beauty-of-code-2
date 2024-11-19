@@ -15,7 +15,9 @@ import java.util.UUID;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, UUID> {
-    @Query(value="select t.id,t.status from Transaction t where t.id in :transactionIds")
+    @Query(value="select new com.github.valentina810.beauty_of_code_2.dto.TransactionsWithStatusDto(t.id, st) " +
+            "from Transaction t join TransactionStatus st on t.status.id = st.statusId "+
+            "where t.id in :transactionIds")
     List<TransactionsWithStatusDto> findTransactionStatusesByIds(@Param("transactionIds") List<UUID> transactionIds);
 
     @Modifying
