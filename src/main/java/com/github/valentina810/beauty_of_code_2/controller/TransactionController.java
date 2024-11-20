@@ -4,6 +4,7 @@ import com.github.valentina810.beauty_of_code_2.dto.TransactionsResultDto;
 import com.github.valentina810.beauty_of_code_2.model.StatusTransaction;
 import com.github.valentina810.beauty_of_code_2.service.TransactionService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -28,7 +29,8 @@ public class TransactionController {
     @PatchMapping
     @Operation(summary = "Обновление статусов переданного списка транзакций")
     @ResponseStatus(OK)
-    public TransactionsResultDto updateStatusTransaction(@RequestParam StatusTransaction status, @RequestBody List<UUID> transactionsId) {
+    public TransactionsResultDto updateStatusTransaction(@RequestParam @Parameter(description = "Статус, в который необходимо перевести транзакции") StatusTransaction status,
+                                                         @RequestBody List<UUID> transactionsId) {
         if (PENDING.equals(status)) {
             return transactionService.updateTransactionStatuses(transactionsId, status);
         } else

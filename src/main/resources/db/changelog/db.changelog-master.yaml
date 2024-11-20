@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/v.1.0.0/changeset/2024-11-19-add-tables.sql
+  - include:
+      file: db/changelog/v.1.0.0/changeset/2024-11-20-add-data-in-table-transaction-status.sql
+  - include:
+      file: db/changelog/v.1.0.0/changeset/2024-11-21-add-function-generate-test-transactions.sql
