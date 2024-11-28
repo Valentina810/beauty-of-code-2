@@ -5,11 +5,10 @@ import com.github.valentina810.beauty_of_code_2.dto.ErrorTransactionDto;
 import com.github.valentina810.beauty_of_code_2.dto.TransactionsResultDto;
 import com.github.valentina810.beauty_of_code_2.dto.TransactionsWithStatusDto;
 import com.github.valentina810.beauty_of_code_2.model.StatusTransaction;
-import com.github.valentina810.beauty_of_code_2.model.Transaction;
+import com.github.valentina810.beauty_of_code_2.model.TransactionStatus;
 import com.github.valentina810.beauty_of_code_2.repository.TransactionRepository;
 import com.github.valentina810.beauty_of_code_2.repository.TransactionsStatusRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -19,15 +18,16 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
+import static com.github.valentina810.beauty_of_code_2.model.StatusTransaction.PENDING;
+
 @Service
 @RequiredArgsConstructor
 public class TransactionServiceImpl implements TransactionService {
 
     private static final int BATCH_SIZE = 1000;
 
-    @Autowired
-    private TransactionRepository transactionRepository;
-    private TransactionsStatusRepository transactionStatusRepository;
+    private final TransactionRepository transactionRepository;
+    private final TransactionsStatusRepository transactionStatusRepository;
 
     @Async("transactionTaskExecutor")
     public CompletableFuture<TransactionsResultDto> processBatch(List<UUID> batchIds, StatusTransaction status) {
@@ -36,16 +36,14 @@ public class TransactionServiceImpl implements TransactionService {
         List<ErrorTransactionDto> erroneousTransactions = new ArrayList<>();
 
         try {
-            // Шаг 1: Получить статусы транзакций
             List<TransactionsWithStatusDto> transactionStatuses = transactionRepository.findTransactionStatusesByIds(batchIds);
 
-            // Шаг 2: Разделить транзакции на те, что можно обработать, и те, что имеют неподходящий статус
             List<UUID> transactionsToProcess = new ArrayList<>();
             for (TransactionsWithStatusDto transactionData : transactionStatuses) {
                 UUID transactionId = transactionData.getId();
                 String currentStatus = transactionData.getStatus().getStatusName();
 
-                if ("PENDING".equalsIgnoreCase(currentStatus)) {
+                if (PENDING.name().equalsIgnoreCase(currentStatus)) {
                     transactionsToProcess.add(transactionId);
                 } else {
                     erroneousTransactions.add(
@@ -56,13 +54,12 @@ public class TransactionServiceImpl implements TransactionService {
                 }
             }
 
-            // Шаг 3: Обновить статус для транзакций, которые можно обработать
             if (!transactionsToProcess.isEmpty()) {
-                transactionRepository.updateTransactionStatusForIds(transactionsToProcess, transactionStatusRepository.findByStatusName(status.name()));
+                TransactionStatus byStatusName = transactionStatusRepository.findByStatusName(status.name());
+                transactionRepository.updateTransactionStatusForIds(transactionsToProcess, byStatusName.getStatusId());
                 successfullyProcessedTransactions.addAll(transactionsToProcess);
             }
 
-            // Шаг 4: Найти отсутствующие транзакции и добавить их в список ошибок
             List<UUID> missingTransactionIds = batchIds.stream()
                     .filter(id -> transactionStatuses.stream().noneMatch(data -> id.equals(data.getId())))
                     .toList();
@@ -82,7 +79,6 @@ public class TransactionServiceImpl implements TransactionService {
             ));
         }
 
-        // Установка данных в DTO
         result.setCountSuccessfullyProcessedTransactions((long) successfullyProcessedTransactions.size());
         result.setSuccessfullyProcessedTransactions(successfullyProcessedTransactions);
         result.setCountErroneousTransactions((long) erroneousTransactions.size());
@@ -96,16 +92,13 @@ public class TransactionServiceImpl implements TransactionService {
         TransactionsResultDto finalResult = new TransactionsResultDto();
         List<CompletableFuture<TransactionsResultDto>> futures = new ArrayList<>();
 
-        // Разделение на батчи и асинхронная обработка
         for (int i = 0; i < transactionIds.size(); i += BATCH_SIZE) {
             List<UUID> batchIds = transactionIds.subList(i, Math.min(i + BATCH_SIZE, transactionIds.size()));
             futures.add(processBatch(batchIds, status));
         }
 
-        // Ждем завершения всех батчей
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
 
-        // Сбор финального результата
         List<UUID> allSuccessfullyProcessedTransactions = new ArrayList<>();
         List<ErrorTransactionDto> allErroneousTransactions = new ArrayList<>();
         long successfulCount = 0;

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.UUID;
 
-import static com.github.valentina810.beauty_of_code_2.model.StatusTransaction.PENDING;
+import static com.github.valentina810.beauty_of_code_2.model.StatusTransaction.PROCESSED;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
@@ -31,10 +31,10 @@ public class TransactionController {
     @ResponseStatus(OK)
     public TransactionsResultDto updateStatusTransaction(@RequestParam @Parameter(description = "Статус, в который необходимо перевести транзакции") StatusTransaction status,
                                                          @RequestBody List<UUID> transactionsId) {
-        if (PENDING.equals(status)) {
+        if (PROCESSED.equals(status)) {
             return transactionService.updateTransactionStatuses(transactionsId, status);
         } else
-            throw new UnsupportedOperationException("Обработка транзакций со статусом " + status + " не поддерживается");
+            throw new UnsupportedOperationException("Перевод транзакций в статус " + status + " не поддерживается");
     }
 
 }
