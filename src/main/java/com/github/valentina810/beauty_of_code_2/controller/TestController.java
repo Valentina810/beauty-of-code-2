@@ -17,7 +17,7 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "Методы для тестирования обработки транзакций")
+@Tag(name = "TestController | Методы для тестирования обработки транзакций")
 public class TestController {
 
     private final TestTransactionService testTransactionService;
@@ -25,7 +25,7 @@ public class TestController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Сгенерировать транзакции")
-    public List<UUID> generateTransactions(@RequestParam @Parameter(description = "Статус транакций") StatusTransaction status,
+    public List<UUID> generateTransactions(@RequestParam @Parameter(description = "Статус транзакций") StatusTransaction status,
                                            @RequestParam @Parameter(description = "Количество транзакций") Integer count) {
         return testTransactionService.createTransactions(status,count);
     }

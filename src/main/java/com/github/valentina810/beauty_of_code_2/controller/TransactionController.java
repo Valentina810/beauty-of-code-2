@@ -21,7 +21,7 @@ import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "Работа с транзакциями")
+@Tag(name = "TransactionController | Работа с транзакциями")
 public class TransactionController {
 
     private final TransactionService transactionService;
