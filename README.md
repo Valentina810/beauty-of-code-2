@@ -1,3 +1,5 @@
+[Чеклист](https://github.com/Valentina810/beauty-of-code-2/blob/main/checklist.md)
+
 https://beautifulcode.ru
 # Задание бэк Java
 
