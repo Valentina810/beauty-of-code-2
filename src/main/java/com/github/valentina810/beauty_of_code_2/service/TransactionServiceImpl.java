@@ -24,7 +24,7 @@ import static com.github.valentina810.beauty_of_code_2.model.StatusTransaction.P
 @RequiredArgsConstructor
 public class TransactionServiceImpl implements TransactionService {
 
-    private static final int BATCH_SIZE = 1000;
+    private static final int BATCH_SIZE = 1000;//вынести в переменную, чтобы задавать при запуске
 
     private final TransactionRepository transactionRepository;
     private final TransactionsStatusRepository transactionStatusRepository;

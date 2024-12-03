@@ -29,4 +29,9 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
     @Transactional
     @Query(value = "select unnest(generate_transactions(:n, :statusName));", nativeQuery = true)
     List<UUID> generateTransactions(@Param("n") int n, @Param("statusName") String statusName);
+
+    @Modifying
+    @Transactional
+    @Query(value = "delete from transaction where id in :ids;", nativeQuery = true)
+    void deleteAllByIds(@Param("ids") List<UUID> ids);
 }

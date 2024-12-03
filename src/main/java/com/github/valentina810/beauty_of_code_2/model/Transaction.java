@@ -26,7 +26,7 @@ public class Transaction {
     private BigDecimal amount;
     @Column(name = "date", nullable = false)
     private String date;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)//#todo подумать
     @JoinColumn(name = "id_status", nullable = false)
     private TransactionStatus status;
 }

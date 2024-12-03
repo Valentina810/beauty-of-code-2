@@ -19,12 +19,12 @@ public class TestTransactionServiceImpl implements TestTransactionService {
     @Override
     @Transactional
     public List<UUID> createTransactions(StatusTransaction status, Integer countTransactions) {
-        return transactionRepository.generateTransactions(countTransactions,status.name());
+        return transactionRepository.generateTransactions(countTransactions, status.name());
     }
 
     @Override
     public void deleteTransactions(List<UUID> transactionIds) {
-
+        transactionRepository.deleteAllByIds(transactionIds);
     }
 
     @Override
