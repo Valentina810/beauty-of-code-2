@@ -34,4 +34,9 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
     @Transactional
     @Query(value = "delete from transaction where id in :ids;", nativeQuery = true)
     void deleteAllByIds(@Param("ids") List<UUID> ids);
+
+    @Modifying
+    @Transactional
+    @Query(value = "truncate table transaction;", nativeQuery = true)
+    void deleteAllTransactions();
 }

@@ -29,6 +29,6 @@ public class TestTransactionServiceImpl implements TestTransactionService {
 
     @Override
     public void deleteAllTransactions() {
-
+        transactionRepository.deleteAllTransactions();
     }
 }

@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,11 +23,12 @@ import static org.springframework.http.HttpStatus.NO_CONTENT;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "TestController | Методы для тестирования обработки транзакций")
+@RequestMapping("/transaction")
 public class TestController {
 
     private final TestTransactionService testTransactionService;
 
-    @PostMapping
+    @PostMapping("/generate")
     @ResponseStatus(CREATED)
     @Operation(summary = "Сгенерировать транзакции")
     public List<UUID> generateTransactions(@RequestParam @Parameter(description = "Статус транзакций") StatusTransaction status,
@@ -39,5 +41,12 @@ public class TestController {
     @Operation(summary = "Удалить транзакции")
     public void deleteTransactions(@RequestBody List<UUID> transactionsId) {
         testTransactionService.deleteTransactions(transactionsId);
+    }
+
+    @DeleteMapping("/all")
+    @ResponseStatus(NO_CONTENT)
+    @Operation(summary = "Очистить таблицу транзакций (удалить все записи)")
+    public void deleteALLTransactions() {
+        testTransactionService.deleteAllTransactions();
     }
 }
