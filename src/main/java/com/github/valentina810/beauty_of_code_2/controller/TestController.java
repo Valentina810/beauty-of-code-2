@@ -33,7 +33,7 @@ public class TestController {
     @Operation(summary = "Сгенерировать транзакции")
     public List<UUID> generateTransactions(@RequestParam @Parameter(description = "Статус транзакций") StatusTransaction status,
                                            @RequestParam @Parameter(description = "Количество транзакций") Integer count) {
-        return testTransactionService.createTransactions(status,count);
+        return testTransactionService.createTransactions(status, count);
     }
 
     @DeleteMapping

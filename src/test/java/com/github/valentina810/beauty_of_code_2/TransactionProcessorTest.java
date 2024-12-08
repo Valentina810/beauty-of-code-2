@@ -1,7 +1,7 @@
 
 package com.github.valentina810.beauty_of_code_2;
 
-import com.github.valentina810.beauty_of_code_2.service.TransactionServiceImpl;
+import com.github.valentina810.beauty_of_code_2.service.impl.TransactionServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

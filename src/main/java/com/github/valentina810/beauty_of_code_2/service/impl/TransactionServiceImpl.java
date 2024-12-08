@@ -1,14 +1,17 @@
 
-package com.github.valentina810.beauty_of_code_2.service;
+package com.github.valentina810.beauty_of_code_2.service.impl;
 
 import com.github.valentina810.beauty_of_code_2.dto.ErrorTransactionDto;
 import com.github.valentina810.beauty_of_code_2.dto.TransactionsResultDto;
 import com.github.valentina810.beauty_of_code_2.dto.TransactionsWithStatusDto;
 import com.github.valentina810.beauty_of_code_2.model.StatusTransaction;
 import com.github.valentina810.beauty_of_code_2.model.TransactionStatus;
+import com.github.valentina810.beauty_of_code_2.repository.SettingRepository;
 import com.github.valentina810.beauty_of_code_2.repository.TransactionRepository;
 import com.github.valentina810.beauty_of_code_2.repository.TransactionsStatusRepository;
+import com.github.valentina810.beauty_of_code_2.service.TransactionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -24,10 +27,12 @@ import static com.github.valentina810.beauty_of_code_2.model.StatusTransaction.P
 @RequiredArgsConstructor
 public class TransactionServiceImpl implements TransactionService {
 
-    private static final int BATCH_SIZE = 1000;//вынести в переменную, чтобы задавать при запуске
-
     private final TransactionRepository transactionRepository;
     private final TransactionsStatusRepository transactionStatusRepository;
+    private final SettingRepository settingRepository;
+
+    @Value("${default.batch.size}")
+    private int defaultBatchSize;
 
     @Async("transactionTaskExecutor")
     public CompletableFuture<TransactionsResultDto> processBatch(List<UUID> batchIds, StatusTransaction status) {
@@ -89,11 +94,21 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public TransactionsResultDto updateTransactionStatuses(List<UUID> transactionIds, StatusTransaction status) {
+        int batchSize = settingRepository.findById("batchSize")
+                .map(e -> {
+                    try {
+                        return Integer.parseInt(String.valueOf(e));
+                    } catch (NumberFormatException ex) {
+                        return defaultBatchSize;
+                    }
+                })
+                .orElse(defaultBatchSize);
+
         TransactionsResultDto finalResult = new TransactionsResultDto();
         List<CompletableFuture<TransactionsResultDto>> futures = new ArrayList<>();
 
-        for (int i = 0; i < transactionIds.size(); i += BATCH_SIZE) {
-            List<UUID> batchIds = transactionIds.subList(i, Math.min(i + BATCH_SIZE, transactionIds.size()));
+        for (int i = 0; i < transactionIds.size(); i += batchSize) {
+            List<UUID> batchIds = transactionIds.subList(i, Math.min(i + batchSize, transactionIds.size()));
             futures.add(processBatch(batchIds, status));
         }
 
@@ -123,26 +138,5 @@ public class TransactionServiceImpl implements TransactionService {
 
         return finalResult;
     }
+
 }
-
-
-//
-//    public void processTransactions(List<Transaction> transactions) {
-//        for (Transaction transaction : transactions) {
-//            if (transaction.getAmount().compareTo(new BigDecimal(10000))>0) {
-//                logger.log("Processing large transaction: " + transaction.getId());
-//            }
-//            processTransaction(transaction);
-//        }
-//    }
-//
-//    private void processTransaction(Transaction transaction) {
-//        try {
-//            if (transaction.getStatus().getStatusName().equals("PENDING")) {
-////                transaction.setStatus("PROCESSED");
-//                repository.save(transaction);
-//            }
-//        } catch (Exception e) {
-//            logger.log("Error processing transaction: " + e.getMessage());
-//        }
-//    }

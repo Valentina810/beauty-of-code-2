@@ -3,7 +3,6 @@ package com.github.valentina810.beauty_of_code_2.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -26,7 +25,7 @@ public class Transaction {
     private BigDecimal amount;
     @Column(name = "date", nullable = false)
     private String date;
-    @ManyToOne(fetch = FetchType.EAGER)//#todo подумать
+    @ManyToOne
     @JoinColumn(name = "id_status", nullable = false)
     private TransactionStatus status;
 }

@@ -1,7 +1,8 @@
-package com.github.valentina810.beauty_of_code_2.service;
+package com.github.valentina810.beauty_of_code_2.service.impl;
 
 import com.github.valentina810.beauty_of_code_2.model.StatusTransaction;
 import com.github.valentina810.beauty_of_code_2.repository.TransactionRepository;
+import com.github.valentina810.beauty_of_code_2.service.TestTransactionService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
