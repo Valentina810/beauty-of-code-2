@@ -3,7 +3,6 @@ package com.github.valentina810.beauty_of_code_2.repository;
 
 import com.github.valentina810.beauty_of_code_2.dto.TransactionsWithStatusDto;
 import com.github.valentina810.beauty_of_code_2.model.Transaction;
-import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -22,21 +21,18 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
     List<TransactionsWithStatusDto> findTransactionStatusesByIds(@Param("transactionIds") List<UUID> transactionIds);
 
     @Modifying
-    @Transactional
     @Query(value = "update transaction set id_status = :idStatus where id in :ids;", nativeQuery = true)
     void updateTransactionStatusForIds(@Param("ids") List<UUID> ids, @Param("idStatus") Long idStatus);
 
-    @Transactional
+    @Modifying
     @Query(value = "select unnest(generate_transactions(:n, :statusName));", nativeQuery = true)
     List<UUID> generateTransactions(@Param("n") int n, @Param("statusName") String statusName);
 
     @Modifying
-    @Transactional
     @Query(value = "delete from transaction where id in :ids;", nativeQuery = true)
     void deleteAllByIds(@Param("ids") List<UUID> ids);
 
     @Modifying
-    @Transactional
     @Query(value = "truncate table transaction;", nativeQuery = true)
     void deleteAllTransactions();
 }

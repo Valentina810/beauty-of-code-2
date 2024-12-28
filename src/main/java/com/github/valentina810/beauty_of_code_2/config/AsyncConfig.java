@@ -1,5 +1,6 @@
 package com.github.valentina810.beauty_of_code_2.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -9,26 +10,20 @@ import java.util.concurrent.Executor;
 
 @Configuration
 @EnableAsync
+@Slf4j
 public class AsyncConfig {
 
     @Bean(name = "transactionTaskExecutor")
     public Executor taskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-
-        // Определение количества ядер процессора
         int cores = Runtime.getRuntime().availableProcessors();
-        System.out.println("Available processors (cores): " + cores);
-
-        // Настройка пула потоков на основе данных системы
-        int corePoolSize = cores; // Основное количество потоков = количество ядер процессора
-        int maxPoolSize = cores * 2; // Максимум потоков в 2 раза больше количества ядер
-        int queueCapacity = 500; // Можно динамически настроить в зависимости от задачи
-
-        // Дополнительно можно рассчитать параметры на основе памяти:
+        log.info("Available processors (cores): {}", cores);
+        int maxPoolSize = cores * 2;
+        int queueCapacity = 500;
         long maxMemory = Runtime.getRuntime().maxMemory();
-        System.out.println("Max memory (bytes): " + maxMemory);
+        log.info("Max memory (bytes): {}", maxMemory);
 
-        executor.setCorePoolSize(corePoolSize);
+        executor.setCorePoolSize(cores);
         executor.setMaxPoolSize(maxPoolSize);
         executor.setQueueCapacity(queueCapacity);
         executor.setThreadNamePrefix("DynamicTransactionThread-");

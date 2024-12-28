@@ -10,6 +10,7 @@ import com.github.valentina810.beauty_of_code_2.repository.SettingRepository;
 import com.github.valentina810.beauty_of_code_2.repository.TransactionRepository;
 import com.github.valentina810.beauty_of_code_2.repository.TransactionsStatusRepository;
 import com.github.valentina810.beauty_of_code_2.service.TransactionService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
@@ -34,6 +35,7 @@ public class TransactionServiceImpl implements TransactionService {
     @Value("${default.batch.size}")
     private int defaultBatchSize;
 
+    @Transactional
     @Async("transactionTaskExecutor")
     public CompletableFuture<TransactionsResultDto> processBatch(List<UUID> batchIds, StatusTransaction status) {
         TransactionsResultDto result = new TransactionsResultDto();
@@ -42,7 +44,6 @@ public class TransactionServiceImpl implements TransactionService {
 
         try {
             List<TransactionsWithStatusDto> transactionStatuses = transactionRepository.findTransactionStatusesByIds(batchIds);
-
             List<UUID> transactionsToProcess = new ArrayList<>();
             for (TransactionsWithStatusDto transactionData : transactionStatuses) {
                 UUID transactionId = transactionData.getId();
@@ -94,15 +95,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public TransactionsResultDto updateTransactionStatuses(List<UUID> transactionIds, StatusTransaction status) {
-        int batchSize = settingRepository.findById("batchSize")
-                .map(e -> {
-                    try {
-                        return Integer.parseInt(String.valueOf(e));
-                    } catch (NumberFormatException ex) {
-                        return defaultBatchSize;
-                    }
-                })
-                .orElse(defaultBatchSize);
+        int batchSize = getBatchSize();
 
         TransactionsResultDto finalResult = new TransactionsResultDto();
         List<CompletableFuture<TransactionsResultDto>> futures = new ArrayList<>();
@@ -139,4 +132,15 @@ public class TransactionServiceImpl implements TransactionService {
         return finalResult;
     }
 
+    private Integer getBatchSize() {
+        return settingRepository.findById("batchSize")
+                .map(e -> {
+                    try {
+                        return Integer.parseInt(String.valueOf(e));
+                    } catch (NumberFormatException ex) {
+                        return defaultBatchSize;
+                    }
+                })
+                .orElse(defaultBatchSize);
+    }
 }
